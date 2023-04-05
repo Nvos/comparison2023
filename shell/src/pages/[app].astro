@@ -1,0 +1,13 @@
+---
+  import ReactComponent from '../components/ReactComponent';
+  import Layout from '../layouts/Layout.astro'
+
+  const { app } = Astro.params;
+---
+
+<Layout title="Welcome to Astro.">
+  <main>
+    {app &&
+    <ReactComponent client:only="react" app={app} />}
+  </main>
+</Layout>
