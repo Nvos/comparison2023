@@ -1,9 +1,11 @@
 <script lang="ts">
-  export let wtf: string = "";
-  type $$Props = HTMLButtonElement;
+  export let value: string = "";
+  type $$Props = HTMLButtonElement & {
+    value: string
+  };
 </script>
 
 <button {...$$restProps}>
   <slot />
-  {wtf}
+  {value}
 </button>

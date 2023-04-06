@@ -12,24 +12,32 @@
   function increment() {
     value++;
   }
+
+  let something = { 
+    value: {
+      value: 0
+    }
+  }
+
+  function increment1(value) {
+    value.value.value = value.value.value + 1;
+    something = value;
+  }
 </script>
 
 <main>
   <!-- <Calc /> -->
-  <Child on:favorite={(it) => it.detail.nextValue} bind:value />
-  <button on:click={increment}>increment</button>
+  <!-- <Child on:favorite={(it) => it.detail.nextValue} bind:value /> -->
+  <!-- <button on:click={increment}>increment</button> -->
   {value}
-  <Parent let:exposed={value}>
-    <div>Default? {value}</div>
-    <div slot="slot-1">Slot 1?</div>
-  </Parent>
 
-  <!-- <Parent let:exposed={wtf}>
-    {#if value === 0}
-      <div slot="slot-1">Default? {value}</div>
+    {#if value === 3}
+    <Parent>
+      <div slot="slot-1">Slot 1?</div>
+    </Parent>
     {/if}
-  </Parent> -->
-  <Button wtf="??">omega</Button>
+  <button on:click={() => increment1(something)}>click</button>
+  {something.value.value}
 </main>
 
 <style>
