@@ -7,6 +7,8 @@
   import Parent from "./lib/Parent.svelte";
   import Button from "./lib/Button.svelte";
   import { getContext } from "svelte";
+  import Complex from "./lib/Complex.svelte";
+  import Reactivity1 from "./lib/Reactivity1.svelte";
   let value = 0;
 
   function increment() {
@@ -29,7 +31,7 @@
   <!-- <Calc /> -->
   <!-- <Child on:favorite={(it) => it.detail.nextValue} bind:value /> -->
   <!-- <button on:click={increment}>increment</button> -->
-  {value}
+  <!-- {value}
 
     {#if value === 3}
     <Parent>
@@ -37,7 +39,8 @@
     </Parent>
     {/if}
   <button on:click={() => increment1(something)}>click</button>
-  {something.value.value}
+  {something.value.value} -->
+  <Reactivity1 />
 </main>
 
 <style>

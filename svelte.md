@@ -2,24 +2,26 @@
 
 Svelte doesn't feel like UI framework but whole language, it has very small runtime but mostly focuses on compiler, it feels like you are writing javascript but in reality you are writing `svelte` not just javascript.
 
-## Ecosystem (WIP)
+## Ecosystem
 
 Given that `svelte` had few years to grow, there's barely any good library, and most of ones which were recommended previously are abandonware. Community seems to think that it is good thing as it forces developers to implement own components instead of looking for libraries. Such thinking can be problematic as it can result in lack of high quality maintained libraries. There's no official support for eco system or any standard libraries which are recommended by community.
 
-- Router (lacks standalone official solution)
+- Router
   - https://github.com/mefechoel/svelte-navigator (javascript, last update 8 months ago)
   - https://github.com/AlexxNB/tinro (javascript, last update 2 years ago)
   - https://kit.svelte.dev/ (recommended solution, official whole framework built on top of svelte)
+  - https://github.com/roxiness/routify - (javascript, last update ~3 months ago)
 - Unstyled accessible components (primitives to build on)
   - https://github.com/rgossiaux/svelte-headlessui (last update ~1 year ago) - Doesn't privde quite a few common components such as toast/checkbox/combobox/tooltip etc
 - Component libraries
   - https://github.com/illright/attractions (last update ~1 year ago)
   - https://github.com/hperrin/svelte-material-ui (less than ~1 day ago)
+  - https://github.com/themesberg/flowbite-svelte (less than ~1 day ago)
 - Styling (baked in framework itself, thought it is just simple file scoped css modules)
 - i18n
   - https://github.com/kaisermann/svelte-i18n (last update ~0.5 year ago) - pretty much wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
 
-## Re-render
+## Rendering
 
 **Reactive system** depending on compiler magic, any variable which is assigned anywhere in code is turned into reactive one by compiler, which allows for easy re-renders on simple writes somewhat like proxy. Effects are handled using outdated/unused javascript syntax `$: {statement}`. Every change triggers invalidation, which results in making variable dirty and then scheduling update. After some time (batching) updates are flushed and template is re-rendered and dirty flag on variables is cleared
 
@@ -237,6 +239,7 @@ useEffect(() => {
   console.log({ a, b, c, d })
 }, [a,b,c,d]);
 
+<!-- OUTPUT -->
 Object { a: 1, b: 8, c: 3, d: 4 }
 Object { a: 1, b: 8, c: 3, d: 4 }
 resetting
@@ -245,6 +248,48 @@ Object { a: 11, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
+
+Thee is another interesting example (not very realistic one, possibly prone to infinite loops). Svelte:
+
+```typescript
+let isSmallerThan10 = true;
+let count = 1;
+$: if (count) {
+  if (count < 10) {
+    console.log("smaller", count);
+    // this should trigger this reactive block again and enter the "else" but it doesn't
+    count = 11;
+  } else {
+    console.log("larger", count);
+    isSmallerThan10 = false;
+  }
+}
+<!-- OUTPUT -->
+smaller 1
+```
+
+Solid:
+
+```typescript
+const [count, setCount] = createSignal(0);
+const [isSmallerThan10, setIsSmallerThan10] = createSignal(true);
+
+createEffect(() => {
+  if (count() < 10) {
+    console.log("smaller", count());
+    setCount(11);
+  } else {
+    console.log("larger", count());
+    setIsSmallerThan10(false);
+  }
+});
+
+<!-- OUTPUT -->
+smaller 0
+larger 11
+```
+
+Interestingly some proposed solutions (can take look at issues) point to `effect` apis similar to `react`/`solid`, using specific api `tick` which returns `promise` which resolves as soon as pending state is applied to dom or rewriting it in `svelte/store` which apperantely behaves differently than internal component reactivity which is not a good thing. Eitherway in any more complex case no matter solution whole simplicity is lost and there is no clear path to resolve issue.
 
 ## Error handling
 
@@ -262,9 +307,77 @@ Each svelte file is composed by `script` (can be mulitple, can even be module if
 
 Component format being single file can be quite annoying as it discourages creation of small components which ideally would be colocated in single file. Components should always be first class citizen in modern framework and should be easy to define and refactor. There's quite few good points from author of solid about this https://dev.to/ryansolid/why-i-m-not-a-fan-of-single-file-components-3bfl
 
+Given how currently popular and supported typescript is and along with it support for `tsx`/`jsx` it feels strange to use custom file format instead of depending on typescript which is nowdays widely supported and has first class tooling everywhere. While it can be convinient to have custom file format using it loses most of benefits of typescript ecosystem and requires specific tooling to connect to it and it is hard to say if this specific tooling is enough.
+
+### Readibility
+
+Simple components are quite readable but when there is more complexity it can be hard to understand what is where given that there is quite a lot of things which you can use which by default compiler hides but can be necessary when writting convinient to use and bit more complex components e.g.:
+
+```svelte
+<script lang="ts">
+import { createEventDispatcher, onMount, onDestroy } from "svelte";
+
+export let count: number = 0;
+export let loading: boolean = false;
+type $$Props = HTMLElementTagNameMap['button'] & {
+    count: number;
+    loading: boolean;
+};
+
+type $$Slots = {
+    default: {
+        count: number;
+    }
+    iconLeft: {
+        count1: number
+    }
+}
+
+onMount(() => {
+    console.log('mount, e.g. fetch data')
+})
+
+onDestroy(() => {
+    console.log('cleanup')
+})
+
+const dispatch = createEventDispatcher();
+
+const handleClick = () => {
+    count = count + 1;
+    if (count === 3) {
+        dispatch('countis3')
+    }
+}
+
+$: dispatch('countchange', {count: count})
+</script>
+
+<button on:click={handleClick} {...$$restProps}>
+    {#if loading}
+        Loading....
+    {:else}
+        <slot name="iconLeft" count1={count} />
+        <slot {count} />
+    {/if}
+</button>
+```
+
+This component has following things:
+
+1. `$$Props` - used to type props, as all html `button` props have to be forwarded, additionally it is merged with prop types defined by component `count` and `loading`
+2. `export let count` and `export let loading` exposes those properties to be used as props, given that `$$Props` is set those have to be manually typed
+3. `$$Slots` - used to manually type variables exposed to slots. To access this variable in named slot there's need for specific syntax e.g. `<svelte:fragment slot="iconLeft" let:count1>...<svelte:fragment>`
+4. `onMount`/`onDestroy` - standard directives
+5. `handleClick` - function which increments count and calls disptch, any `dispatch` call inside `.svelte` is turned into callback prop which can be accessed via `on` directive
+6. `$:` - reactivity, dispatch on `count` change
+7. html template which conditionally depending on `loading` prop shows either slots or simple `Loading....` string
+
+There could be few more things such as styles/context/directives etc. Overall while template feels somewhat ok, script feels all over the place there's no proper structure or order. Prop types are somewhat floating and internally in component `$$restProps` is not typed only when using component. There's no specific order for `html`/`script`/`style` and there can be multiple `script` sections e.g. `module` one. Any `dispatch` can be called anywhere and is turned into callbacks handler automatically and can be called via `on`
+
 ### Styling
 
-Styling is quite limited, basically it is standard css modules scoped to file with possibility to opt out of scoping via `global`. There are pain points with such styling meaning you canno't pass styles down to children from parent and there's no support for design system - variables/variants/compound variants/responsive helpers etc. Thought it seems possible to use `vanilla-extract` with svelte but given that svelte comes with own styling it is debatable it using external library is good idea
+Styling is quite limited, basically it is standard css modules scoped to file with possibility to opt out of scoping via `global`. There are pain points with such styling meaning you canno't pass styles down to children from parent and there's no support for design system - variables/variants/compound variants/responsive helpers etc. Thought it seems possible to use `vanilla-extract` with svelte but given that svelte comes with own styling it is debatable it using external library is good idea.
 
 - There's oustanding issue to improve styling pain points https://github.com/sveltejs/svelte/issues/6972
 
@@ -363,6 +476,8 @@ Svelte supports typescript via `<script lang="ts">` and specific ide plugins usi
 - Suggestions do not work very well when typing in templates, especially for directives or templating expressions/variables(starting with `$$`)
 - Documentation completely ignores typescript
 - When opting out of automatic typing for props via `$$Props` we lost all of the magic and need to manually add types for exported code to `$$Props`
+- Callbacks are automatically exported when executing any dispatch with correct name, thought there's currently no possible way to opt out of this automatic typing like with `$$Props`
+- Due to how typescript is handled there can be holes in typings e.g. `$$restProps` should have same type as `type $$Props` but it doesn't
 
 Example of generic type resolution:
 
@@ -399,9 +514,6 @@ While `svelte` likely has more good enought performance and if it is not enought
 
 - Benchmarks https://krausest.github.io/js-framework-benchmark/
 
-## Sveltekit - official starter framework (WIP)
-
 ## Notes
 
-- Starts simple but becomes problematic as complexity of application grows. Assumption can be made that it will be great fit for small-medium apps
 - https://learn.svelte.dev/tutorial/welcome-to-svelte - link to docs, there are 2 tutorials this one seems latest but on their main website it links to https://svelte.dev/tutorial/basics which seems worse?
