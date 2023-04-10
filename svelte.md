@@ -38,7 +38,7 @@ Library comes in with baked in store - `svelte/store` which can be used for shar
 - `readable` - provides value which cannot be externally modified, similar value usage handling as in `writable
 - `derived` - used to combine values from multiple or single story and optionally modify it
 
-Store package is not compatible with `svelte` component syntax and can result in different behavior as changes on it are not batched. Take a look at [differences in usage of store and component state](https://github.com/Nvos/comparison2023/app-svelte/src/lib/State4.svelte)
+Store package is not compatible with `svelte` component syntax and can result in different behavior as changes on it are not batched. Take a look at [differences in usage of store and component state](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State4.svelte)
 
 ### Arrays and objects
 
@@ -165,7 +165,7 @@ There's few outstanding issues (e.g. from 2021) which show clear reactivity inco
 - https://github.com/sveltejs/svelte/issues/6732
 
 1. Multiple dependent effects
-- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State1.svelte)
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State1.svelte)
 ```javascript
 resetting
 Object { a: 11, b: 0, c: 0, d: 22 }
@@ -176,7 +176,7 @@ resetting
 Object { a: 11, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
-- [React](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State1.tsx)
+- [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/component/State1.tsx)
 ```javascript
 Object { a: 1, b: 8, c: 3, d: 4 }
 Object { a: 1, b: 8, c: 3, d: 4 }
@@ -188,7 +188,7 @@ Object { a: 0, b: 0, c: 0, d: 0 }
 ```
 
 2. Effect modyfing value on which it is dependent
-- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State2.svelte)
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State2.svelte)
 ```javascript
 smaller 1
 ```
@@ -197,7 +197,7 @@ smaller 1
 smaller 0
 larger 11
 ```
-- [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/State2.tsx)
+- [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/component/State2.tsx)
 ```javascript
 smaller 0
 smaller 0
@@ -205,7 +205,7 @@ larger 11
 ```
 
 3. Specific reactivity case where effects are called multiple times for object/array while once for primitives
-- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State3.svelte)
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State3.svelte)
 ```javascript
 array Array [ 1 ]
 value 1

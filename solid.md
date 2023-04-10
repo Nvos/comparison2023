@@ -18,7 +18,7 @@ Implementation of reactivity allows for synchronous execution which solves main 
 - Changes are executed **synchronously**
 - Changes are executed **immediately**
 
-[Example of behavior](https://github.com/Nvos/comparison2023/app-solid/src/State1.tsx)
+[Example of behavior](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State1.tsx)
 1. Changes are going from top to bottom
 2. Effect 1 sets `a`
 3. Effect 2 already has updated value of `a` from previous effect and sets `d` using this value
