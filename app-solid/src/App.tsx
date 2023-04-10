@@ -1,18 +1,12 @@
 import { Component } from "solid-js";
-import { Calc } from "./Calc";
-import { Button } from "./Complex";
-import { Reactivity1 } from "./Reactivity1";
-
-const IconLeft: Component<{ count: number }> = (props) => {
-  return <div>{props.count}</div>;
-};
+import { State1 } from "./State1";
+import { State2 } from "./State2";
+import { State4 } from "./State4";
 
 export const App = () => {
   return (
     <div>
-      <Button IconLeft={IconLeft} count={0} loading={false}>
-        Button!
-      </Button>
+      <State4 />
     </div>
   );
 };

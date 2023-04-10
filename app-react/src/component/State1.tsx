@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export const Calc = () => {
+export const State1 = () => {
   const [a, setA] = useState(1);
   const [b, setB] = useState(8);
   const [c, setC] = useState(3);

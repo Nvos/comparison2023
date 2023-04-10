@@ -15,18 +15,30 @@ Given that `svelte` had few years to grow, there's barely any good library, and 
   - https://github.com/rgossiaux/svelte-headlessui (last update ~1 year ago) - Doesn't privde quite a few common components such as toast/checkbox/combobox/tooltip etc
 - Component libraries
   - https://github.com/illright/attractions (last update ~1 year ago)
-  - https://github.com/hperrin/svelte-material-ui (less than ~1 day ago)
-  - https://github.com/themesberg/flowbite-svelte (less than ~1 day ago)
-- Styling (baked in framework itself, thought it is just simple file scoped css modules)
+  - https://github.com/hperrin/svelte-material-ui (active)
+  - https://github.com/themesberg/flowbite-svelte (active)
+  - https://github.com/carbon-design-system/carbon-components-svelte (active)
+- Styling (baked in framework itself, thought it is just simple file scoped css modules/scss)
 - i18n
   - https://github.com/kaisermann/svelte-i18n (last update ~0.5 year ago) - pretty much wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
 
-## Rendering
+## State
 
-**Reactive system** depending on compiler magic, any variable which is assigned anywhere in code is turned into reactive one by compiler, which allows for easy re-renders on simple writes somewhat like proxy. Effects are handled using outdated/unused javascript syntax `$: {statement}`. Every change triggers invalidation, which results in making variable dirty and then scheduling update. After some time (batching) updates are flushed and template is re-rendered and dirty flag on variables is cleared
+**Reactive system** depending on compiler magic, any variable which is assigned anywhere in code is turned into reactive one by compiler, which allows for easy re-renders on simple writes somewhat like proxy. Effects are handled using outdated/unused javascript syntax `$: {statement}`. Every change triggers invalidation, which results in making variable dirty and then scheduling update. After some time (batching) updates are flushed and template is re-rendered and dirty flag on variables is cleared.
+
+Component reactivity is quite convinient as changes are applied synchronously which allows to use modified variable to be used directly after change, thought stores are exception and cannot be read synchronously
 
 - Works amazingly well for low complexity but becomes problematic to reason about and manage along with complexity grow
 - Magical `$: {statement}` only works in `.svelte` files which makes it problematic as it means extracting state logic to separate file isn't simple copy paste. It is necessary to refactor refactive statements used in `.svelte` file to use functions from `svelte/store`. Then After importing state from extracted logic prefixing variables with `$` is necessary. Take a look at example of svelte component:
+
+### Store
+
+Library comes in with baked in store - `svelte/store` which can be used for sharing state between components without passing it as props or on component scope. Package exposes 3 functions:
+- `writable` - uses `set` and `update` to modify value and `subscribe` to listen. There's no way to synchronously read value. When using `subscribe` there's need to unsubscribe manually unless using it in svelte component in template then can prefix value with `$` which internally handles subscription
+- `readable` - provides value which cannot be externally modified, similar value usage handling as in `writable
+- `derived` - used to combine values from multiple or single story and optionally modify it
+
+Store package is not compatible with `svelte` component syntax and can result in different behavior as changes on it are not batched. Take a look at [differences in usage of store and component state](https://github.com/Nvos/comparison2023/app-svelte/src/lib/State4.svelte)
 
 ### Arrays and objects
 
@@ -152,94 +164,20 @@ There's few outstanding issues (e.g. from 2021) which show clear reactivity inco
 - https://github.com/sveltejs/svelte/issues/6730
 - https://github.com/sveltejs/svelte/issues/6732
 
-Output from solid (m)
-
-```jsx
-const [a, setA] = createSignal(1);
-const [b, setB] = createSignal(8);
-const [c, setC] = createSignal(3);
-const [d, setD] = createSignal(4);
-
-createEffect(() => {
-  setA(b() + c());
-});
-
-createEffect(() => {
-  setD(a() * 2);
-});
-
-createEffect(() => {
-  if (a() > 10) {
-    console.log('resetting');
-    setB(0);
-    setC(0);
-  }
-});
-
-createEffect(() => {
-  console.log({ a:a(), b:b(), c:c(), d:d() })
-});
-
-<!-- OUTPUT -->
+1. Multiple dependent effects
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State1.svelte)
+```javascript
+resetting
+Object { a: 11, b: 0, c: 0, d: 22 }
+```
+- [Solid](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State1.tsx)
+```javascript
 resetting
 Object { a: 11, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
-
-Output from svelte
-
-```js
-let b = 8;
-let a = 1;
-let c = 3;
-let d = 4;
-
-$: a = b + c;
-$: d = a * 2;
-
-const reset = () => (b = c = 0);
-
-$: if (a > 10) {
-  console.log("resetting");
-  reset();
-}
-
-$: console.log({ a, b, c, d });
-
-<!-- OUTPUT -->
-resetting
-Object { a: 11, b: 0, c: 0, d: 22 }
-```
-
-Output from react
-
-```jsx
-const [a, setA] = useState(1);
-const [b, setB] = useState(8);
-const [c, setC] = useState(3);
-const [d, setD] = useState(4);
-
-useEffect(() => {
-  setA(b + c);
-}, [b, c]);
-
-  useEffect(() => {
-  setD(a * 2);
-}, [a]);
-
-useEffect(() => {
-  if (a > 10) {
-    console.log('resetting');
-    setB(0);
-    setC(0);
-  }
-}, [a]);
-
-useEffect(() => {
-  console.log({ a, b, c, d })
-}, [a,b,c,d]);
-
-<!-- OUTPUT -->
+- [React](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State1.tsx)
+```javascript
 Object { a: 1, b: 8, c: 3, d: 4 }
 Object { a: 1, b: 8, c: 3, d: 4 }
 resetting
@@ -249,44 +187,29 @@ Object { a: 0, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
 
-Thee is another interesting example (not very realistic one, possibly prone to infinite loops). Svelte:
-
-```typescript
-let isSmallerThan10 = true;
-let count = 1;
-$: if (count) {
-  if (count < 10) {
-    console.log("smaller", count);
-    // this should trigger this reactive block again and enter the "else" but it doesn't
-    count = 11;
-  } else {
-    console.log("larger", count);
-    isSmallerThan10 = false;
-  }
-}
-<!-- OUTPUT -->
+2. Effect modyfing value on which it is dependent
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State2.svelte)
+```javascript
 smaller 1
 ```
-
-Solid:
-
-```typescript
-const [count, setCount] = createSignal(0);
-const [isSmallerThan10, setIsSmallerThan10] = createSignal(true);
-
-createEffect(() => {
-  if (count() < 10) {
-    console.log("smaller", count());
-    setCount(11);
-  } else {
-    console.log("larger", count());
-    setIsSmallerThan10(false);
-  }
-});
-
-<!-- OUTPUT -->
+- [Solid](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State2.tsx)
+```javascript
 smaller 0
 larger 11
+```
+- [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/State2.tsx)
+```javascript
+smaller 0
+smaller 0
+larger 11
+```
+
+3. Specific reactivity case where effects are called multiple times for object/array while once for primitives
+- [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/lib/State3.svelte)
+```javascript
+array Array [ 1 ]
+value 1
+array Array [ 1 ]
 ```
 
 Interestingly some proposed solutions (can take look at issues) point to `effect` apis similar to `react`/`solid`, using specific api `tick` which returns `promise` which resolves as soon as pending state is applied to dom or rewriting it in `svelte/store` which apperantely behaves differently than internal component reactivity which is not a good thing. Eitherway in any more complex case no matter solution whole simplicity is lost and there is no clear path to resolve issue.
@@ -311,69 +234,13 @@ Given how currently popular and supported typescript is and along with it suppor
 
 ### Readibility
 
-Simple components are quite readable but when there is more complexity it can be hard to understand what is where given that there is quite a lot of things which you can use which by default compiler hides but can be necessary when writting convinient to use and bit more complex components e.g.:
+Simple components are quite readable but when there is more complexity it can be hard to understand what is where given that there is quite a lot of things which you can use which by default compiler hides but can be necessary when writting convinient to use and bit more complex components. 
 
-```svelte
-<script lang="ts">
-import { createEventDispatcher, onMount, onDestroy } from "svelte";
-
-export let count: number = 0;
-export let loading: boolean = false;
-type $$Props = HTMLElementTagNameMap['button'] & {
-    count: number;
-    loading: boolean;
-};
-
-type $$Slots = {
-    default: {
-        count: number;
-    }
-    iconLeft: {
-        count1: number
-    }
-}
-
-onMount(() => {
-    console.log('mount, e.g. fetch data')
-})
-
-onDestroy(() => {
-    console.log('cleanup')
-})
-
-const dispatch = createEventDispatcher();
-
-const handleClick = () => {
-    count = count + 1;
-    if (count === 3) {
-        dispatch('countis3')
-    }
-}
-
-$: dispatch('countchange', {count: count})
-</script>
-
-<button on:click={handleClick} {...$$restProps}>
-    {#if loading}
-        Loading....
-    {:else}
-        <slot name="iconLeft" count1={count} />
-        <slot {count} />
-    {/if}
-</button>
-```
-
-This component has following things:
-
-1. `$$Props` - used to type props, as all html `button` props have to be forwarded, additionally it is merged with prop types defined by component `count` and `loading`
-2. `export let count` and `export let loading` exposes those properties to be used as props, given that `$$Props` is set those have to be manually typed
-3. `$$Slots` - used to manually type variables exposed to slots. To access this variable in named slot there's need for specific syntax e.g. `<svelte:fragment slot="iconLeft" let:count1>...<svelte:fragment>`
-4. `onMount`/`onDestroy` - standard directives
-5. `handleClick` - function which increments count and calls disptch, any `dispatch` call inside `.svelte` is turned into callback prop which can be accessed via `on` directive
-6. `$:` - reactivity, dispatch on `count` change
-7. html template which conditionally depending on `loading` prop shows either slots or simple `Loading....` string
-
-There could be few more things such as styles/context/directives etc. Overall while template feels somewhat ok, script feels all over the place there's no proper structure or order. Prop types are somewhat floating and internally in component `$$restProps` is not typed only when using component. There's no specific order for `html`/`script`/`style` and there can be multiple `script` sections e.g. `module` one. Any `dispatch` can be called anywhere and is turned into callbacks handler automatically and can be called via `on`
+There is no enforced order for anything:
+- Any code outside of `script`/`style` is `html` all of those can be in any order in svelte file
+- When opting out of automatic typing and typing manually e.g. `$$Props` there's no enforced place where it could be, it is pretty much floating and doesn't look like it is being used
+- Any component props are defined by exporting variables
+- Any `dispatch` call is turned into event callback, once again there's no defintion it just happens automatically no matter where `dispatch` is used
 
 ### Styling
 
@@ -383,7 +250,7 @@ Styling is quite limited, basically it is standard css modules scoped to file wi
 
 ### Slots
 
-Component composition is handled by primitive called `slot` it can be either named or default one. This allows component to decide where to put children components. This api is somewhat problematic as you canno't conditionally render slot content instead have to render whole component.
+Component composition is handled by primitive called `slot` it can be either named or default one. This allows component to decide where to put children components. This api is somewhat problematic as you cannot conditionally render slot content instead have to render whole component.
 
 Following code will not work
 
@@ -406,6 +273,8 @@ It has to be:
 	<Parent />
 {/if}
 ```
+
+Parent component can define props passed to specific slots, in case of default slot you can directly use `let` directive to access them but in case of named ones you need to wrap content of named slot in `svelte:fragment`
 
 ### Templating
 
@@ -473,11 +342,11 @@ Svelte supports typescript via `<script lang="ts">` and specific ide plugins usi
 
 - Simple typing automatically works for props exported from script
 - Hacky and undocumented solutions to typing spread - `type $$Props` and solution to have generic component `type T = $$Generic;`. When using `type $$Props` you lose automatic props typing and have to type each prop manually. Seems like most of types which `svelte` uses are hidden and can be exposed via specific names prefixed with `$$`, most of compiler/tooling magic seems to obfuscate this and try to make it easy to use but this just makes it more annoying to use for complex cases and makes it seem more simple that it really is
-- Suggestions do not work very well when typing in templates, especially for directives or templating expressions/variables(starting with `$$`)
+- Suggestions do not work very well when typing in templates, especially for directives, templating expressions or internal variables(starting with `$$`)
 - Documentation completely ignores typescript
 - When opting out of automatic typing for props via `$$Props` we lost all of the magic and need to manually add types for exported code to `$$Props`
 - Callbacks are automatically exported when executing any dispatch with correct name, thought there's currently no possible way to opt out of this automatic typing like with `$$Props`
-- Due to how typescript is handled there can be holes in typings e.g. `$$restProps` should have same type as `type $$Props` but it doesn't
+- Due to how typescript is handled there can be holes in typings e.g. `type $$Props` defines component props, but props are typed only for usage not internally, this means `$$restProps` and `$$props` are untyped
 
 Example of generic type resolution:
 
@@ -497,10 +366,16 @@ Example of generic type resolution:
 Example of props typing (by default it seems to be handled automatically):
 
 ```typescript
-<script lang="ts">type $$Props = HTMLButtonElement;</script>
+<script lang="ts">
+  import { HTMLButtonAttributes } from 'svelte/elements';
+  type $$Props = HTMLButtonAttributes;
+</script>
 ```
 
 Overall it feels strange as technically those types are unsued, and are somehow internally hidden and automatically handled but when you use them then you opt out from automatic typing and have to handle it manually. Everything seems to be handled by svelte language service.
+
+
+I have encountered some value typing problems for simple cases, such as union e.g. `let value: string | undefined = undefined;` this type for some reason was just `string` instead of union. Seems that for some reason typechecking in some cases is overriden or lost?
 
 ## Size
 
@@ -510,10 +385,20 @@ Constantly marked as small, but point of comparison is based off runtime size wh
 
 ## Performance
 
-While `svelte` likely has more good enought performance and if it is not enought then it means that you are doing something wrong there are few interesting things. Marketing of `svelte` always points to performance and that it being `compiled` and having no virtual dom allows it to have amazing performance, funny thing is that it is outclassed by vue 3.0 in benchmarks and vue uses vritual dom thus making their main point not really valid. Additionally when comparing most popular libraries `solidjs` has best performance while react has worst. React being worst can be expected as library doesn't focus on it at all.
+While `svelte` likely has more good enought performance and if it is not enought then it means that you are doing something wrong there are few interesting things. Marketing of `svelte` always points to performance and that it being `compiled` and having no virtual dom allows it to have amazing performance, funny thing is that it is similar to vue in benchmarks and vue uses vritual dom thus making their main point not really valid. 
 
 - Benchmarks https://krausest.github.io/js-framework-benchmark/
+
+## Usage
+
+Svelte is now out for quite few years now, while is was released on 2019 but technically it was usable in either 2020 or 2021, later being more likely. According to statistics it didn't grow much in usage in last 2 years. Given svelte's syntax it competes with vue and somewhat angular due to templating and being somewhat easier to use alternative to vue. 
+
+Currently it can be hard to search for svelte developers due to low usage(21%). Thus it might be necessary to search for people with libraries similar to svelte such as vue(46%) or maybe even angular (49% but much more complex) which both have similar mental model and templating syntax. Though both of them are falling in usage.
+
+- Statistics taken from https://2022.stateofjs.com/en-US/libraries/front-end-frameworks/
 
 ## Notes
 
 - https://learn.svelte.dev/tutorial/welcome-to-svelte - link to docs, there are 2 tutorials this one seems latest but on their main website it links to https://svelte.dev/tutorial/basics which seems worse?
+- https://github.com/sveltejs/svelte/issues/6730#issuecomment-923268648
+- https://github.com/sveltejs/svelte/issues/4265 - https://svelte.dev/repl/b0204a06a3f24ede8850017c8b20b998?version=3.17.1 (double reactivity)

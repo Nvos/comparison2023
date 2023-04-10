@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from 'solid-js';
 
-export function Calc() {
+export function State1() {
   const [a, setA] = createSignal(1);
   const [b, setB] = createSignal(8);
   const [c, setC] = createSignal(3);
@@ -26,5 +26,5 @@ export function Calc() {
     console.log({ a:a(), b:b(), c:c(), d:d() })
   });
 
-  return <></>;
+  return null;
 }
