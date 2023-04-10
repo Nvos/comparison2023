@@ -6,14 +6,17 @@ export function State1() {
   const [c, setC] = createSignal(3);
   const [d, setD] = createSignal(4);
   
+  // Effect 1
   createEffect(() => {
     setA(b() + c());
   });
 
+  // Effect 2
   createEffect(() => {
     setD(a() * 2);
   });
 
+  // Effect 3
   createEffect(() => {
     if (a() > 10) {
 			console.log('resetting');
@@ -22,6 +25,7 @@ export function State1() {
 		}
   });
 
+  // Effect 4
   createEffect(() => {
     console.log({ a:a(), b:b(), c:c(), d:d() })
   });
