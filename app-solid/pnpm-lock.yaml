@@ -2,13 +2,13 @@ lockfileVersion: '6.0'
 
 dependencies:
   solid-js:
-    specifier: ^1.7.2
-    version: 1.7.2
+    specifier: ^1.7.3
+    version: 1.7.3
 
 devDependencies:
   '@solidjs/testing-library':
     specifier: ^0.6.0
-    version: 0.6.0(solid-js@1.7.2)
+    version: 0.6.0(solid-js@1.7.3)
   '@testing-library/jest-dom':
     specifier: ^5.16.5
     version: 5.16.5
@@ -23,10 +23,10 @@ devDependencies:
     version: 5.0.3
   vite:
     specifier: ^4.1.1
-    version: 4.1.1(@types/node@18.11.18)
+    version: 4.1.1
   vite-plugin-solid:
     specifier: ^2.5.0
-    version: 2.5.0(solid-js@1.7.2)(vite@4.1.1)
+    version: 2.5.0(solid-js@1.7.3)(vite@4.1.1)
   vitest:
     specifier: ^0.28.4
     version: 0.28.4(jsdom@21.1.0)
@@ -632,14 +632,14 @@ packages:
     resolution: {integrity: sha512-gFukHN4t8K4+wVC+ECqeqwzBDeFeTzBXroBTqE6vcWrQGbEUpHO7LYdG0f4xnvYq4VOEwITSlHlp0JBAIFMS/g==}
     dev: true
 
-  /@solidjs/testing-library@0.6.0(solid-js@1.7.2):
+  /@solidjs/testing-library@0.6.0(solid-js@1.7.3):
     resolution: {integrity: sha512-Hnm1lF2qkwyqYb2BM2pZw1gw1yzJUrFgfpvTSHi/iVRHpeZbSbPgPMCQSsLN5+iCSCYepAi7D8MBmWoH3M7voA==}
     engines: {node: '>= 14'}
     peerDependencies:
       solid-js: '>=1.0.0'
     dependencies:
       '@testing-library/dom': 8.20.0
-      solid-js: 1.7.2
+      solid-js: 1.7.3
     dev: true
 
   /@testing-library/dom@8.20.0:
@@ -1962,13 +1962,13 @@ packages:
       is-fullwidth-code-point: 4.0.0
     dev: true
 
-  /solid-js@1.7.2:
-    resolution: {integrity: sha512-01f8GIc+HTTlfDXtK+TFku3AllHyJ3hNsIpxM2qpObRP4VbEGVIP6VbULnThPlpse+J1y/I/1N9QeQ9MNkE8Ow==}
+  /solid-js@1.7.3:
+    resolution: {integrity: sha512-4hwaF/zV/xbNeBBIYDyu3dcReOZBECbO//mrra6GqOrKy4Soyo+fnKjpZSa0nODm6j1aL0iQRh/7ofYowH+jzw==}
     dependencies:
       csstype: 3.1.1
       seroval: 0.5.1
 
-  /solid-refresh@0.4.1(solid-js@1.7.2):
+  /solid-refresh@0.4.1(solid-js@1.7.3):
     resolution: {integrity: sha512-v3tD/OXQcUyXLrWjPW1dXZyeWwP7/+GQNs8YTL09GBq+5FguA6IejJWUvJDrLIA4M0ho9/5zK2e9n+uy+4488g==}
     peerDependencies:
       solid-js: ^1.3
@@ -1976,7 +1976,7 @@ packages:
       '@babel/generator': 7.20.7
       '@babel/helper-module-imports': 7.18.6
       '@babel/types': 7.20.7
-      solid-js: 1.7.2
+      solid-js: 1.7.3
     dev: true
 
   /source-map-js@1.0.2:
@@ -2181,7 +2181,7 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-solid@2.5.0(solid-js@1.7.2)(vite@4.1.1):
+  /vite-plugin-solid@2.5.0(solid-js@1.7.3)(vite@4.1.1):
     resolution: {integrity: sha512-VneGd3RyFJvwaiffsqgymeMaofn0IzQLPwDzafTV2f1agoWeeJlk5VrI5WqT9BTtLe69vNNbCJWqLhHr9fOdDw==}
     peerDependencies:
       solid-js: ^1.3.17 || ^1.4.0 || ^1.5.0 || ^1.6.0
@@ -2191,12 +2191,45 @@ packages:
       '@babel/preset-typescript': 7.18.6(@babel/core@7.20.7)
       babel-preset-solid: 1.6.6(@babel/core@7.20.7)
       merge-anything: 5.1.4
-      solid-js: 1.7.2
-      solid-refresh: 0.4.1(solid-js@1.7.2)
-      vite: 4.1.1(@types/node@18.11.18)
+      solid-js: 1.7.3
+      solid-refresh: 0.4.1(solid-js@1.7.3)
+      vite: 4.1.1
       vitefu: 0.2.4(vite@4.1.1)
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /vite@4.1.1:
+    resolution: {integrity: sha512-LM9WWea8vsxhr782r9ntg+bhSFS06FJgCvvB0+8hf8UWtvaiDagKYWXndjfX6kGl74keHJUcpzrQliDXZlF5yg==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    hasBin: true
+    peerDependencies:
+      '@types/node': '>= 14'
+      less: '*'
+      sass: '*'
+      stylus: '*'
+      sugarss: '*'
+      terser: ^5.4.0
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+      less:
+        optional: true
+      sass:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+    dependencies:
+      esbuild: 0.16.17
+      postcss: 8.4.21
+      resolve: 1.22.1
+      rollup: 3.13.0
+    optionalDependencies:
+      fsevents: 2.3.2
     dev: true
 
   /vite@4.1.1(@types/node@18.11.18):
@@ -2241,7 +2274,7 @@ packages:
       vite:
         optional: true
     dependencies:
-      vite: 4.1.1(@types/node@18.11.18)
+      vite: 4.1.1
     dev: true
 
   /vitest@0.28.4(jsdom@21.1.0):

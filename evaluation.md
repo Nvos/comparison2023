@@ -12,7 +12,7 @@
 
 Library magically hides a lot of complexity thanks to compiler, significally simplifying syntax and usage for standard things but when when there's need to do something more complex, there's need to opt out of simplicity. Which results in worse developer experience than alternatives. In `react` or `solid` difficulty curve lowers along with learning how those work but in `svelte` it feels like difficulty curve rises the more advenced things you are attempting to do and ends up with need to learn how compiler works, learn about poorly documented internals or completly undocumented typing which is somewhat pasted ontop everything and feels like it floats along instead being integral part of everything.
 
-Seems that library quite likes `$`, anything prefixed with it can be considered `magic`, there are thing prefixed with `$$` which can be considered `hidden` magic, author seems to like `$` very much
+Personally wouldn't choose it for any larger application or anything which has focus on being robust, predictable and maintainable. Might be good fit for smaller applications with focus on data not logic or simple CRUD ui's.
 
 ## Cons
 

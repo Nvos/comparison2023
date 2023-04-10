@@ -23,6 +23,7 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
+    minify: false,
   },
   resolve: {
     conditions: ['development', 'browser'],
