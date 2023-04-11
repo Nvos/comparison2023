@@ -12,7 +12,8 @@ Given that `svelte` had few years to grow, there's barely any good library, and 
   - https://kit.svelte.dev/ (recommended solution, official whole framework built on top of svelte)
   - https://github.com/roxiness/routify - (javascript, last update ~3 months ago)
 - Unstyled accessible components (primitives to build on)
-  - https://github.com/rgossiaux/svelte-headlessui (last update ~1 year ago) - Doesn't privde quite a few common components such as toast/checkbox/combobox/tooltip etc
+  - https://github.com/rgossiaux/svelte-headlessui (last update ~1 year ago) - Doesn't provide quite a few common components such as toast/checkbox/combobox/tooltip etc
+  - https://github.com/chakra-ui/zag (active, beta, supports multiple libs, svelte doc is not yet done)
 - Component libraries
   - https://github.com/illright/attractions (last update ~1 year ago)
   - https://github.com/hperrin/svelte-material-ui (active)
@@ -21,19 +22,26 @@ Given that `svelte` had few years to grow, there's barely any good library, and 
 - Styling (baked in framework itself, thought it is just simple file scoped css modules/scss)
 - i18n
   - https://github.com/kaisermann/svelte-i18n (last update ~0.5 year ago) - pretty much wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
+- forms
+  - https://github.com/chainlist/svelte-forms (last update ~3 months ago)
+  - https://github.com/pablo-abc/felte (last update ~months ago, supports multiple libs)
+  - https://github.com/noahsalvi/svelte-use-form - (active)
+
+There are no recommended libraries to use by community. In react there are goto libraries recommended by community for i18n such as `lingui` or `i18next`, forms such as `react-hook-form`, unstyled components such as `radix`.
 
 ## State
 
 **Reactive system** depending on compiler magic, any variable which is assigned anywhere in code is turned into reactive one by compiler, which allows for easy re-renders on simple writes somewhat like proxy. Effects are handled using outdated/unused javascript syntax `$: {statement}`. Every change triggers invalidation, which results in making variable dirty and then scheduling update. After some time (batching) updates are flushed and template is re-rendered and dirty flag on variables is cleared.
 
-Component reactivity is quite convinient as changes are applied synchronously which allows to use modified variable to be used directly after change, thought stores are exception and cannot be read synchronously
+Component reactivity is quite convenient as changes are applied synchronously which allows to use modified variable to be used directly after change, thought stores are exception and cannot be read synchronously
 
 - Works amazingly well for low complexity but becomes problematic to reason about and manage along with complexity grow
-- Magical `$: {statement}` only works in `.svelte` files which makes it problematic as it means extracting state logic to separate file isn't simple copy paste. It is necessary to refactor refactive statements used in `.svelte` file to use functions from `svelte/store`. Then After importing state from extracted logic prefixing variables with `$` is necessary. Take a look at example of svelte component:
+- Magical `$: {statement}` only works in `.svelte` files which makes it problematic as it means extracting state logic to separate file isn't simple copy paste. It is necessary to refactor reactive statements used in `.svelte` file to use functions from `svelte/store`. Then After importing state from extracted logic prefixing variables with `$` is necessary.
 
 ### Store
 
 Library comes in with baked in store - `svelte/store` which can be used for sharing state between components without passing it as props or on component scope. Package exposes 3 functions:
+
 - `writable` - uses `set` and `update` to modify value and `subscribe` to listen. There's no way to synchronously read value. When using `subscribe` there's need to unsubscribe manually unless using it in svelte component in template then can prefix value with `$` which internally handles subscription
 - `readable` - provides value which cannot be externally modified, similar value usage handling as in `writable
 - `derived` - used to combine values from multiple or single story and optionally modify it
@@ -81,7 +89,7 @@ Thought isn't it a point of having framework being compiler to be able to easily
 
 ### 2 way binding
 
-2 way binding seems to be favored approach by svelte, given in multiple examples it is very simple to achieve just use `bind` directive and if needed just write to variable as easy as this. This can be problematic because both parent and child components will be able to modify this variable. This way of state synchronization should require specific consideration as while this is very convinient it can easily lead to hard to debug bugs. as instead of state always going down from `owner` to `children` it can go both ways. To avoid such problems other libraries consider state to be readonly and immutable and any change require explict operations to modify it. Example of `binding` usage:
+2 way binding seems to be favored approach by svelte, given in multiple examples it is very simple to achieve just use `bind` directive and if needed just write to variable as easy as this. This can be problematic because both parent and child components will be able to modify this variable. This way of state synchronization should require specific consideration as while this is very convenient it can easily lead to hard to debug bugs. as instead of state always going down from `owner` to `children` it can go both ways. To avoid such problems other libraries consider state to be readonly and immutable and any change require explicit operations to modify it. Example of `binding` usage:
 
 ```typescript
 <script>
@@ -105,7 +113,7 @@ Name is shared and modified by 3 sources:
 
 ### Extracting reactive logic
 
-It is common to extract/copy/refactor logic in component when it grows larges. Such operations should be convinient as those are very common. Svelte given special handling of anything in `.svelte` files makes it quite annoying. Lets take a look at following example of refactoring simple reative state:
+It is common to extract/copy/refactor logic in component when it grows larges. Such operations should be convenient as those are very common. Svelte given special handling of anything in `.svelte` files makes it quite annoying. Lets take a look at following example of refactoring simple reactive state:
 
 ```typescript
 <script lang="ts">
@@ -144,9 +152,9 @@ let { a, b, word } = useXY()
 </div>
 ```
 
-It is impossible to use magical `$` in non `.svelte` files thus you canno't easily extract component logic to separate file and have to use special state management library provided by svelte `svelte/store` and then when using it remember to prefix values with `$` for **magic** to happen. Of course you could always use `svelte/store` and ignore `$` but then it seems simplicity of reactivity promoted by svelte is lost and syntax becomes worse than solutions provided by other frameworks and not only that but requires understanding of 2 different state management solutions depending on location (svelte component/standard js/ts file).
+It is impossible to use magical `$` in non `.svelte` files thus you cannot easily extract component logic to separate file and have to use special state management library provided by svelte `svelte/store` and then when using it remember to prefix values with `$` for **magic** to happen. Of course you could always use `svelte/store` and ignore `$` but then it seems simplicity of reactivity promoted by svelte is lost and syntax becomes worse than solutions provided by other frameworks and not only that but requires understanding of 2 different state management solutions depending on location (svelte component/standard js/ts file).
 
-Without using magic layer of `.svelte` you could use less convinient syntax (which actually prefix `$` does internally) such as:
+Without using magic layer of `.svelte` you could use less convenient syntax (which actually prefix `$` does internally) such as:
 
 ```typescript
 let value;
@@ -159,24 +167,30 @@ onDestroy(unsubscribe);
 
 ### Unpredictable reactivity
 
-There's few outstanding issues (e.g. from 2021) which show clear reactivity inconsitienties. There's like few more
+There's few outstanding issues (e.g. from 2021) which show clear reactivity inconsistencies. There's like few more
 
 - https://github.com/sveltejs/svelte/issues/6730
 - https://github.com/sveltejs/svelte/issues/6732
 
 1. Multiple dependent effects
+
 - [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State1.svelte)
+
 ```javascript
 resetting
 Object { a: 11, b: 0, c: 0, d: 22 }
 ```
+
 - [Solid](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State1.tsx)
+
 ```javascript
 resetting
 Object { a: 11, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
+
 - [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/component/State1.tsx)
+
 ```javascript
 Object { a: 1, b: 8, c: 3, d: 4 }
 Object { a: 1, b: 8, c: 3, d: 4 }
@@ -187,17 +201,23 @@ Object { a: 0, b: 0, c: 0, d: 22 }
 Object { a: 0, b: 0, c: 0, d: 0 }
 ```
 
-2. Effect modyfing value on which it is dependent
+2. Effect modifying value on which it is dependent
+
 - [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State2.svelte)
+
 ```javascript
 smaller 1
 ```
+
 - [Solid](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/State2.tsx)
+
 ```javascript
 smaller 0
 larger 11
 ```
+
 - [React](https://github.com/Nvos/comparison2023/tree/master/app-react/src/component/State2.tsx)
+
 ```javascript
 smaller 0
 smaller 0
@@ -205,20 +225,22 @@ larger 11
 ```
 
 3. Specific reactivity case where effects are called multiple times for object/array while once for primitives
+
 - [Svelte](https://github.com/Nvos/comparison2023/tree/master/app-svelte/src/lib/State3.svelte)
+
 ```javascript
 array Array [ 1 ]
 value 1
 array Array [ 1 ]
 ```
 
-Interestingly some proposed solutions (can take look at issues) point to `effect` apis similar to `react`/`solid`, using specific api `tick` which returns `promise` which resolves as soon as pending state is applied to dom or rewriting it in `svelte/store` which apperantely behaves differently than internal component reactivity which is not a good thing. Eitherway in any more complex case no matter solution whole simplicity is lost and there is no clear path to resolve issue.
+Interestingly some proposed solutions (can take look at issues) point to `effect` apis similar to `react`/`solid`, using specific api `tick` which returns `promise` which resolves as soon as pending state is applied to dom or rewriting it in `svelte/store` which alternately behaves differently than internal component reactivity which is not a good thing. Either way in any more complex case no matter solution whole simplicity is lost and there is no clear path to resolve issue.
 
 ## Error handling
 
 Commonly UI libraries which focus on concept of components provide ways to catch errors coming from children at some boundaries, commonly such component is called `ErrorBoundary`. Svelte doesn't provide any such primitive which means that any error will completely crash whole application instead of specific part with possibility of restoration.
 
-Reactive statements are especially propne to this as throwing error from them will result in instant crash as it will be compiled and then ran in unprotected flush by runtime.
+Reactive statements are especially prone to this as throwing error from them will result in instant crash as it will be compiled and then ran in unprotected flush by runtime.
 
 There outstanding issue (from 2018) about error handling API - no resolution so far
 
@@ -226,27 +248,28 @@ There outstanding issue (from 2018) about error handling API - no resolution so 
 
 ## Syntax
 
-Each svelte file is composed by `script` (can be mulitple, can even be module if you want to export function along with svelte component which will have access to component state in global way), `html` (with templating and directives) and `css` (all styles are scoped to component, unless marked as global, standard css)
+Each svelte file is composed by `script` (can be multiple, can even be module if you want to export function along with svelte component which will have access to component state in global way), `html` (with templating and directives) and `css` (all styles are scoped to component, unless marked as global, standard css)
 
-Component format being single file can be quite annoying as it discourages creation of small components which ideally would be colocated in single file. Components should always be first class citizen in modern framework and should be easy to define and refactor. There's quite few good points from author of solid about this https://dev.to/ryansolid/why-i-m-not-a-fan-of-single-file-components-3bfl
+Component format being single file can be quite annoying as it discourages creation of small components which ideally would be collocated in single file. Components should always be first class citizen in modern framework and should be easy to define and refactor. There's quite few good points from author of solid about this https://dev.to/ryansolid/why-i-m-not-a-fan-of-single-file-components-3bfl
 
-Given how currently popular and supported typescript is and along with it support for `tsx`/`jsx` it feels strange to use custom file format instead of depending on typescript which is nowdays widely supported and has first class tooling everywhere. While it can be convinient to have custom file format using it loses most of benefits of typescript ecosystem and requires specific tooling to connect to it and it is hard to say if this specific tooling is enough.
+Given how currently popular and supported typescript is and along with it support for `tsx`/`jsx` it feels strange to use custom file format instead of depending on typescript which is nowadays widely supported and has first class tooling everywhere. While it can be convenient to have custom file format using it loses most of benefits of typescript ecosystem and requires specific tooling to connect to it and it is hard to say if this specific tooling is enough.
 
-### Readibility
+### Readability
 
-Simple components are quite readable but when there is more complexity it can be hard to understand what is where given that there is quite a lot of things which you can use which by default compiler hides but can be necessary when writting convinient to use and bit more complex components. 
+Simple components are quite readable but when there is more complexity it can be hard to understand what is where given that there is quite a lot of things which you can use which by default compiler hides but can be necessary when writhing convenient to use and bit more complex components.
 
 There is no enforced order for anything:
+
 - Any code outside of `script`/`style` is `html` all of those can be in any order in svelte file
 - When opting out of automatic typing and typing manually e.g. `$$Props` there's no enforced place where it could be, it is pretty much floating and doesn't look like it is being used
 - Any component props are defined by exporting variables
-- Any `dispatch` call is turned into event callback, once again there's no defintion it just happens automatically no matter where `dispatch` is used
+- Any `dispatch` call is turned into event callback, once again there's no definition it just happens automatically no matter where `dispatch` is used
 
 ### Styling
 
-Styling is quite limited, basically it is standard css modules scoped to file with possibility to opt out of scoping via `global`. There are pain points with such styling meaning you canno't pass styles down to children from parent and there's no support for design system - variables/variants/compound variants/responsive helpers etc. Thought it seems possible to use `vanilla-extract` with svelte but given that svelte comes with own styling it is debatable it using external library is good idea.
+Styling is quite limited, basically it is standard css modules scoped to file with possibility to opt out of scoping via `global`. There are pain points with such styling meaning you cannot pass styles down to children from parent and there's no support for design system - variables/variants/compound variants/responsive helpers etc. Thought it seems possible to use `vanilla-extract` with svelte but given that svelte comes with own styling it is debatable it using external library is good idea.
 
-- There's oustanding issue to improve styling pain points https://github.com/sveltejs/svelte/issues/6972
+- There's outstanding issue to improve styling pain points https://github.com/sveltejs/svelte/issues/6972
 
 ### Slots
 
@@ -322,7 +345,7 @@ Or more complex cases with multiple branches, svelte decide on `if/if else/else`
 vs (this is solidjs example, in svelte likely fallback would have to be some component inside switch)
 
 ```typescript
-<Switch fallback={<div>unauhorized</div>}>
+<Switch fallback={<div>unauthorized</div>}>
   <Match when={role === isAdmin}>admin</Match>
   <Match when={role === isRole1}>role 1</Match>
   <Match when={role === isRole2}>
@@ -367,15 +390,14 @@ Example of props typing (by default it seems to be handled automatically):
 
 ```typescript
 <script lang="ts">
-  import { HTMLButtonAttributes } from 'svelte/elements';
-  type $$Props = HTMLButtonAttributes;
+  import {HTMLButtonAttributes} from 'svelte/elements'; type $$Props =
+  HTMLButtonAttributes;
 </script>
 ```
 
-Overall it feels strange as technically those types are unsued, and are somehow internally hidden and automatically handled but when you use them then you opt out from automatic typing and have to handle it manually. Everything seems to be handled by svelte language service.
+Overall it feels strange as technically those types are unused, and are somehow internally hidden and automatically handled but when you use them then you opt out from automatic typing and have to handle it manually. Everything seems to be handled by svelte language service.
 
-
-I have encountered some value typing problems for simple cases, such as union e.g. `let value: string | undefined = undefined;` this type for some reason was just `string` instead of union. Seems that for some reason typechecking in some cases is overriden or lost?
+I have encountered some value typing problems for simple cases, such as union e.g. `let value: string | undefined = undefined;` this type for some reason was just `string` instead of union. Seems that for some reason typechecking in some cases is overridden or lost?
 
 ## Size
 
@@ -385,13 +407,13 @@ Constantly marked as small, but point of comparison is based off runtime size wh
 
 ## Performance
 
-While `svelte` likely has more good enought performance and if it is not enought then it means that you are doing something wrong there are few interesting things. Marketing of `svelte` always points to performance and that it being `compiled` and having no virtual dom allows it to have amazing performance, funny thing is that it is similar to vue in benchmarks and vue uses vritual dom thus making their main point not really valid. 
+While `svelte` likely has more good enoughs performance and if it is not enoughs then it means that you are doing something wrong there are few interesting things. Marketing of `svelte` always points to performance and that it being `compiled` and having no virtual dom allows it to have amazing performance, funny thing is that it is similar to vue in benchmarks and vue uses virtual dom thus making their main point not really valid.
 
 - Benchmarks https://krausest.github.io/js-framework-benchmark/
 
 ## Usage
 
-Svelte is now out for quite few years now, while is was released on 2019 but technically it was usable in either 2020 or 2021, later being more likely. According to statistics it didn't grow much in usage in last 2 years. Given svelte's syntax it competes with vue and somewhat angular due to templating and being somewhat easier to use alternative to vue. 
+Svelte is now out for quite few years now, while is was released on 2019 but technically it was usable in either 2020 or 2021, later being more likely. According to statistics it didn't grow much in usage in last 2 years. Given svelte's syntax it competes with vue and somewhat angular due to templating and being somewhat easier to use alternative to vue.
 
 Currently it can be hard to search for svelte developers due to low usage(21%). Thus it might be necessary to search for people with libraries similar to svelte such as vue(46%) or maybe even angular (49% but much more complex) which both have similar mental model and templating syntax. Though both of them are falling in usage.
 
