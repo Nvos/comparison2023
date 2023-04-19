@@ -33,3 +33,7 @@ Personally wouldn't choose it for any larger application or anything which has f
 - Baked in animation and transitions
 - Official state management library
 - Performance
+- Baked in styling solution
+
+# Interesting articles
+- https://dev.to/this-is-learning/the-cost-of-consistency-in-ui-frameworks-4agi
