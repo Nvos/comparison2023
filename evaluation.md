@@ -2,6 +2,34 @@
 
 # Solidjs
 
+Library offers innovative implementation of synchronous reactivity coupled with minimal compiler which feels like direct successor to ideas from `react` while resolving most of issues which came with its model at cost of handling functions as templates instead of code to be re-executed on every change.
+
+Learning curve by itself could be somewhat high when starting without any `jsx` and `hook` knowledge. After understanding those concepts it is quite easy to use even for complex cases as library comes along with loads of primitives to handle them. Quite a bit of `solid` knowledge is shared with `react` which is very good thing as `react` has largest market
+
+## Usage
+- Logic focused applications, with a lot of state
+- Long term projects
+- High performance requirements
+- Realtime data
+
+## Pros
+- Performance
+- Similar to react (quite a lot of `react` knowledge is applicable to `solid`)
+- Synchronous reactivity allows to write more predictable and robust logic
+- Official state management library
+- Single directional data flow
+- Clear separation between read and write operations
+- First class typescript support
+
+## Cons
+- Batching is at times not consistent
+- Slight differences in how data is read from `store` and `createSignal`
+- Destructuring and spreading props can be source of bugs
+- Small community (there's noticeable growth in 2022/2023)
+- Poor library ecosystem (there's noticeable growth in regard to ecosystem in 2022/2023 and important things are officially supported)
+- There can be breaking changes as library is rapidly evolving, possibly can stabilize in version 2.0
+- Documentation is lacking (there's progress in regard to updated documentation)
+
 # Vue
 
 # React
@@ -12,7 +40,12 @@
 
 Library magically hides a lot of complexity thanks to compiler, significantly simplifying syntax and usage for standard things but when when there's need to do something more complex, there's need to opt out of simplicity. Which results in worse developer experience than alternatives. In `react` or `solid` difficulty curve lowers along with learning how those work but in `svelte` it feels like difficulty curve rises the more advanced things you are attempting to do and ends up with need to learn how compiler works, learn about poorly documented internals or completely undocumented typing which is somewhat pasted on top everything and feels like it floats along instead being integral part of everything.
 
-Personally wouldn't choose it for any larger application or anything which has focus on being robust, predictable and maintainable. Might be good fit for smaller applications with focus on data not logic or simple CRUD uis.
+## Usage
+- Smaller applications with tight timelines
+- Static websites
+- CRUD
+- High performance requirements
+- Realtime data
 
 ## Cons
 
@@ -23,7 +56,7 @@ Personally wouldn't choose it for any larger application or anything which has f
 - Component reactivity is different from reactivity outside. Need to use `store` outside of `svelte` components for shared/extracted state logic
 - Component format being single file discourages composition and is more likely to result in large components. In component focused libraries it should be easy to refactor and split single component into multiple smaller ones especially in single file to have collocation
 - No error handling primitives, base library is not very robust and any error can crash whole thing
-- There's barely any ecosystem, quite a lot of it is abandonware and there are no well known libraries which are considered goto for specific things. `React` has such libraries, `angular` comes with most of them baked in, `solid` has support for many libraries as `official` similar thing with `vue`. It doesn't feel that library ecosystem is progressing
+- There's barely any ecosystem, quite a lot of it is abandonware and there are no well known libraries which are considered goto for specific things. `React` has such libraries, `angular` comes with most of them baked in, `solid` has support for many libraries as official similar thing with `vue`. It doesn't feel that library ecosystem is progressing
 - 2 way binding being very easily supported and recommended can be large source of bugs
 - Large differences with react can result in lack of people willing to work on svelte projects as market is react dominated and svelte prospects are unknown. Additionally when switching between react <-> svelte there's no much overlap due to different models
 
@@ -33,7 +66,7 @@ Personally wouldn't choose it for any larger application or anything which has f
 - Baked in animation and transitions
 - Official state management library
 - Performance
-- Baked in styling solution
+- Official styling solution
 
 # Interesting articles
 - https://dev.to/this-is-learning/the-cost-of-consistency-in-ui-frameworks-4agi

@@ -62,7 +62,7 @@ Batching behavior seems to be consistent when using `store` package in regard to
 
 Batching seems to be one of higher priorities now on road to 2.0 and there's quite a lot of discussion in regard to it.
 
-### Store (WIP)
+### Store
 
 Solid is offers official store solution for more complex cases which require nested changes and lazy subscriptions to part of state which were requested. It is somewhat inconsistent in regard to standard `createSignal` as accessing value doesn't require getter, e.g. when using `createSignal` value has to be accessed like so: `value()` while from store just `value`. There's quite big difference in regard to performance when nesting values, as in store you can just provide path to specific element and it will lazily subscribe to it while for `createSignal` subscription is to whole `value` unless other signals are used as values which is valid option due to concept of nested reactivity.
 
