@@ -6,11 +6,12 @@ import { State4 } from './State4';
 import { NestedReactivity1 } from './NestedReactivity1';
 import { NestedReactivity2 } from './NestedReactivity2';
 import { Store } from './Store';
+import { I18nSwitch } from './I18nSwitch';
 
 export const App = () => {
   return (
     <div>
-      <Store />
+      <I18nSwitch />
     </div>
   );
 };

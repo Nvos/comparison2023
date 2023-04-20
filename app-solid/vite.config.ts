@@ -3,9 +3,11 @@
 
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import macrosPlugin from "vite-plugin-babel-macros";
+import { lingui } from '@lingui/vite-plugin';
 
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [solidPlugin(), macrosPlugin(), lingui()],
   server: {
     port: 3000,
   },
