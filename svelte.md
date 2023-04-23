@@ -6,26 +6,34 @@ Svelte doesn't feel like UI framework but whole language, it has very small runt
 
 Given that `svelte` had few years to grow, there's barely any good library, and most of ones which were recommended previously are abandonware. Community seems to think that it is good thing as it forces developers to implement own components instead of looking for libraries. Such thinking can be problematic as it can result in lack of high quality maintained libraries. There's no official support for eco system or any standard libraries which are recommended by community.
 
+**Active** - Library was updated in less than 3 months ago, pending issues are being resolved frequently
+**Inactive** - Library was updated more than 3 months ago, has quite a bit of pending issues
+**Dead** - Library was updated 1 year ago
+
 - Router
-  - https://github.com/mefechoel/svelte-navigator (javascript, last update 8 months ago)
-  - https://github.com/AlexxNB/tinro (javascript, last update 2 years ago)
-  - https://kit.svelte.dev/ (recommended solution, official whole framework built on top of svelte)
-  - https://github.com/roxiness/routify - (javascript, last update ~3 months ago)
+  - https://github.com/mefechoel/svelte-navigator (inactive)
+  - https://github.com/AlexxNB/tinro (inactive)
+  - https://github.com/roxiness/routify - (inactive)
 - Unstyled accessible components (primitives to build on)
-  - https://github.com/rgossiaux/svelte-headlessui (last update ~1 year ago) - Doesn't provide quite a few common components such as toast/checkbox/combobox/tooltip etc
-  - https://github.com/chakra-ui/zag (active, beta, supports multiple libs, svelte doc is not yet done)
+  - https://github.com/rgossiaux/svelte-headlessui (dead) - Doesn't provide quite a few common components such as toast/checkbox/combobox/tooltip etc
+  - https://github.com/chakra-ui/zag (active, supports multiple libs, svelte doc is not yet done)
 - Component libraries
-  - https://github.com/illright/attractions (last update ~1 year ago)
+  - https://github.com/illright/attractions (inactive)
   - https://github.com/hperrin/svelte-material-ui (active)
   - https://github.com/themesberg/flowbite-svelte (active)
   - https://github.com/carbon-design-system/carbon-components-svelte (active)
-- Styling (baked in framework itself, thought it is just simple file scoped css modules/scss)
+- Styling (baked in framework itself, simple file scoped css modules/scss)
 - i18n
-  - https://github.com/kaisermann/svelte-i18n (last update ~0.5 year ago) - pretty much wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
+  - https://github.com/kaisermann/svelte-i18n (inactive) - wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
 - forms
-  - https://github.com/chainlist/svelte-forms (last update ~3 months ago)
-  - https://github.com/pablo-abc/felte (last update ~months ago, supports multiple libs)
+  - https://github.com/chainlist/svelte-forms (inactive)
+  - https://github.com/pablo-abc/felte (inactive)
   - https://github.com/noahsalvi/svelte-use-form - (active)
+- devtools
+  - https://github.com/sveltejs/svelte-devtools (dead)
+- query
+  - https://tanstack.com/query/latest/docs/svelte/overview (active)
+  - https://formidable.com/open-source/urql/docs/basics/svelte/ (graphql, active)
 
 There are no recommended libraries to use by community. In react there are goto libraries recommended by community for i18n such as `lingui` or `i18next`, forms such as `react-hook-form`, unstyled components such as `radix`.
 
@@ -270,6 +278,12 @@ There is no enforced order for anything:
 Styling is quite limited, basically it is standard css modules scoped to file with possibility to opt out of scoping via `global`. There are pain points with such styling meaning you cannot pass styles down to children from parent and there's no support for design system - variables/variants/compound variants/responsive helpers etc. Thought it seems possible to use `vanilla-extract` with svelte but given that svelte comes with own styling it is debatable it using external library is good idea.
 
 - There's outstanding issue to improve styling pain points https://github.com/sveltejs/svelte/issues/6972
+
+### Lacking primitives
+
+1. `Portal` - element allowing to render specific node in any position e.g. outside of root. While it can be implemented using `fixed`/`absolute` positioning it can be problematic due to wrapping in other elements with such positioning or `z-index` problems, which portal allows us to avoid
+2. `ErrorBoundary` - element allowing to catch errors coming from children components allowing to provide fallback component on error and possibility of restoration instead of whole application crash
+3. `Suspense` - element allowing to provide fallback while async action is happening, can be useful when lazy loading routes or data. While this is not as important as `1` and `2` it is quite convenient
 
 ### Slots
 

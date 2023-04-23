@@ -1,5 +1,8 @@
 **All comparisons are based off only base library doesn't include things such as `sveltekit`/`next`/`solidstart` etc**
 
+1. All comparisons are based oof only base library, official frameworks offered by them are not part of it
+2. All comparisons are only client side SPA relevant
+
 # Solidjs
 
 Library offers innovative implementation of synchronous reactivity coupled with minimal compiler which feels like direct successor to ideas from `react` while resolving most of issues which came with its model at cost of handling functions as templates instead of code to be re-executed on every change.
@@ -20,7 +23,8 @@ Learning curve by itself could be somewhat high when starting without any `jsx` 
 - Single directional data flow
 - Clear separation between read and write operations
 - First class typescript support
-
+- Separation between template (handled by compiler) and reactivity (handler by runtime via `solid-js`), ensures that logic wont be affected by compiler 
+  
 ## Cons
 - Batching is at times not consistent
 - Slight differences in how data is read from `store` and `createSignal`
@@ -28,7 +32,7 @@ Learning curve by itself could be somewhat high when starting without any `jsx` 
 - Small community (there's noticeable growth in 2022/2023)
 - Poor library ecosystem (there's noticeable growth in regard to ecosystem in 2022/2023 and important things are officially supported)
 - There can be breaking changes as library is rapidly evolving, possibly can stabilize in version 2.0
-- Documentation is lacking (there's progress in regard to updated documentation)
+- Documentation is lacking (there's ongoing effort in regard to improved documentation https://docs.solidjs.com/)
 
 # Vue
 
@@ -47,6 +51,14 @@ Library magically hides a lot of complexity thanks to compiler, significantly si
 - High performance requirements
 - Realtime data
 
+## Pros
+
+- Very beginner friendly
+- Animation and transitions as part of library
+- Performance
+- Styling solution as part of library
+- Store as part of library
+
 ## Cons
 
 - Reactivity is inconsistent, there's quite a few long outstanding issues without resolution
@@ -59,14 +71,15 @@ Library magically hides a lot of complexity thanks to compiler, significantly si
 - There's barely any ecosystem, quite a lot of it is abandonware and there are no well known libraries which are considered goto for specific things. `React` has such libraries, `angular` comes with most of them baked in, `solid` has support for many libraries as official similar thing with `vue`. It doesn't feel that library ecosystem is progressing
 - 2 way binding being very easily supported and recommended can be large source of bugs
 - Large differences with react can result in lack of people willing to work on svelte projects as market is react dominated and svelte prospects are unknown. Additionally when switching between react <-> svelte there's no much overlap due to different models
-
-## Pros
-
-- Very beginner friendly as long there are experienced people willing to create complex building blocks of application
-- Baked in animation and transitions
-- Official state management library
-- Performance
-- Official styling solution
+- Poor documentation, there's not much effort to improve on it
 
 # Interesting articles
 - https://dev.to/this-is-learning/the-cost-of-consistency-in-ui-frameworks-4agi
+
+# Future
+- Fine grained reactivity
+- Compiler optimizations
+- Developer experience focus
+- Even better Typescript support
+- Tools written in Go/Rust e.g. `swc` and `esbuild`
+- Signals - popularized by solid, `preact` and `angular` made decision to switch their state handling, other libraries might follow

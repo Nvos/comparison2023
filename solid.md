@@ -2,6 +2,37 @@
 
 ## Ecosystem (WIP)
 
+As of now there's not many libraries in ecosystem but for quite few cases there are defined good go to libraries and some of them are officially supported.
+
+**Active** - Library was updated in last month
+**Inactive** - Library was updated ~3 months ago
+**Dead** - Library was updated 1 year ago
+
+- Router
+  - https://github.com/solidjs/solid-router (active, official)
+- Unstyled accessible components (primitives to build on)
+  - https://github.com/kobaltedev/kobalte (active, recommended by community, has own section in official discord)
+  - https://github.com/chakra-ui/zag (active, cross framework solution supporting vue, react and solid)
+  - https://github.com/chakra-ui/ark (active, cross framework solution powered by zag supporting vue, react and solid)
+- Component libraries
+  - https://github.com/hope-ui/hope-ui (inactive, rewrite in progress)
+  - https://github.com/swordev/suid (active)
+- Styling
+  - https://docs.solidjs.com/guides/how-to-guides/styling-in-solid/css-modules
+  - https://docs.solidjs.com/guides/how-to-guides/styling-in-solid/tailwind-css
+  - https://docs.solidjs.com/guides/how-to-guides/styling-in-solid/unocss
+  - https://vanilla-extract.style/ (cross framework styling solution, personal recommendation)
+- i18n
+  - https://github.com/solidjs-community/solid-primitives (active, community manages primitives, provides simple i18n)
+  - https://github.com/lingui/js-lingui (active, can use core+macro, no official solid support but works well, personal recommendation)
+- forms
+  - https://modularforms.dev/ (active)
+  - https://github.com/pablo-abc/felte (inactive, cross framework solution)
+- devtools
+  - https://github.com/thetarnav/solid-devtools (active)
+- query
+  - https://tanstack.com/query/latest/docs/solid/overview (active)
+
 ## State
 
 Reactive system using primitives offered by library itself which are de-coupled from rendering system and can be used as standalone library. Primitives are based off signals and proxies and provide clear separation between write and read by making value read-only and writes via separate function. All primitives are similar and likely based off `react` hooks but are more convenient to use due to automatic dependency tracking.
@@ -74,7 +105,13 @@ Derived values are internally supported by store, via getters which can be used 
 
 Store supports internally as part of state derived values via usage of [getters](https://github.com/Nvos/comparison2023/tree/master/app-solid/src/Store1.tsx)
 
-## Error handling (WIP)
+## Error handling
+
+Component level error handling via [`ErrorBoundary`](https://www.solidjs.com/docs/latest/api#errorboundary) component which catches errors from wrapped children and fallbacks to specific view. This is exactly as `react` expect there's no need to fallback to own implementation via `class` component. This allows to ensure that only part of application crashes, with additional benefit of being able to:
+- Access errors, e.g. send them to some collection service
+- Restart nested components with initial state
+
+Function level error handling via [`catchError`](https://www.solidjs.com/docs/latest/api#catcherror) with callback on error
 
 ## Syntax (WIP)
 
@@ -106,9 +143,23 @@ const Component = (props) => {
 
 ### Readability (WIP)
 
-### Styling (WIP)
+Due to usage of jsx/tsx component definitions are very readable, as order is always enforced:
+1. Component name and typing for props
+2. Events and values are typed via props, thus commonly above component there's type for props used by component, thought requires some naming enforcement
+3. Body of function starts with usage of `solid-js` reactivity primitives
+4. Return `jsx/tsx`, commonly only once as early return can be problematic as it would require remount of component to re-run
+5. Template part where DOM elements and components are used and flow is achieved by components provided by library
 
-### JSX/TSX (WIP)
+
+### Styling
+
+There's no baked in styling or any official recommendations, there are sections in regard to multiple different styling libraries in new documentation https://docs.solidjs.com/guides/how-to-guides/styling-in-solid. Most of solutions which are popular in react were ported to work in solid such as `styled-components` or `emotion` thought those are not listed in docs. There's as well https://vanilla-extract.style/ which is zero runtime library with very good typescript support which can be used along with solid which not only provides styling solution, but brings following things as well:
+- Multi theme support without globals
+- Type safe variables (handled as css variables by browser)
+- Variants and compound variants
+- Possibility of using it as atomic css framework
+
+Vanilla extract is overall very good framework agnostic choice
 
 ## Typescript (WIP)
 

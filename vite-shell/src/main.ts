@@ -1,1 +1,1 @@
-import 'app-react';
+import('@app/react');
