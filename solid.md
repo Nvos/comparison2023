@@ -1,6 +1,6 @@
 # Solid
 
-## Ecosystem (WIP)
+## Ecosystem
 
 As of now there's not many libraries in ecosystem but for quite few cases there are defined good go to libraries and some of them are officially supported.
 
@@ -37,7 +37,7 @@ As of now there's not many libraries in ecosystem but for quite few cases there 
 
 Reactive system using primitives offered by library itself which are de-coupled from rendering system and can be used as standalone library. Primitives are based off signals and proxies and provide clear separation between write and read by making value read-only and writes via separate function. All primitives are similar and likely based off `react` hooks but are more convenient to use due to automatic dependency tracking.
 
-- [Introduction to fine grained reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf)
+- [Introduction to fine grained reactivity](https://dev.to/ryansolid/a-hands-on-introduction-to-fine-grained-reactivity-3ndf) - Handles granularity of updates at expression level
 
 In comparison to `react` dependencies of effect/memo etc. are handled automatically, when any dependency is read as part of other primitive it becomes dependency of that primitive. It is possible as well to manually decide what should be dependency using `on` function which allows to define dependencies manually.
 

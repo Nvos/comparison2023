@@ -28,6 +28,7 @@ Learning curve by itself could be somewhat high when starting without any `jsx` 
 ## Cons
 - Batching is at times not consistent
 - Slight differences in how data is read from `store` and `createSignal`
+- Store returns proxy instead of accessor which can be problematic as passing reactive state as component props has to be handled with care
 - Destructuring and spreading props can be source of bugs
 - Small community (there's noticeable growth in 2022/2023)
 - Poor library ecosystem (there's noticeable growth in regard to ecosystem in 2022/2023 and important things are officially supported)
@@ -73,13 +74,63 @@ Library magically hides a lot of complexity thanks to compiler, significantly si
 - Large differences with react can result in lack of people willing to work on svelte projects as market is react dominated and svelte prospects are unknown. Additionally when switching between react <-> svelte there's no much overlap due to different models
 - Poor documentation, there's not much effort to improve on it
 
-# Interesting articles
-- https://dev.to/this-is-learning/the-cost-of-consistency-in-ui-frameworks-4agi
+# Opinionated
+## JSX vs templating engine
+Libraries which nowdays use templating engine solutions instead of JSX are outdated and should be avoided. People glorify them for separation of concern and that it is just simple HTML which for most cases is delusion as there are always templating engine specific logic/flow expressions, custom directives and possibly other things present in scope and all of them are different for each framework. By using JSX by default you get:
+- Good typescript support, no need for any custom language server or IDE specific tooling
+- Simpler mental model
+- Component being first class citizen, easy to create small ones, logic/flow can be just a component
+- Possibility of using javascript instead of custom framework specific solutions
+- Composability
+- Templates are functions thus any errors are regular javascript exceptions
+- Simple scoping rules
+
+It was shown by solid and react that JSX can be used in different ways, e.g.
+- React uses JSX as is, template is converted to function calls which are called on each change
+- Solid uses JSX as a definiton for a compiler, to achieve high performance and fine grained changes
+
+## Styling and systems
+Nowdays CSS or its extensions such as SCSS or framework specific solutions are not that convinient to work with due to heavy focus on design systems which often require:
+- Theme
+- Dynamic styling
+- Component variants (e.g. button - ghost/solid/outline)
+- Scoping
+- Standardization
+
+ALl of above are solved by modern css-in-js solutions, with nearly zero performance cost and great DX benefits:
+- Typesafety
+- Automatic scoping  (build step)
+- Standardization via system tokens (tokens can be same in design and implementation, ideally exported from design)
+- Generate static CSS at build time
+- Component variants
+- Compound variants - apply styles given combination of variants (e.g. button ghost + colorScheme)
+- Composition
+- Theme
+
+Current best example of cross framework css-in-js solution is [vanilla-extract](https://vanilla-extract.style/)
+
+## Component frameworks
+We are moving away from standard component frameworks which include large amounts of styled opinionated components to unstyled primitives offering mostly logic, accessibility and user experience features such as focus management and shortcuts. 
+
+Such primitive component libraries provide building blocks of specific components which can be styled and composed according to specific needs e.g. `Dialog` consists commonly of following parts - Root, Trigger, Portal, Overlay, Content, Close, Title and Description. Using those `Dialog` parts we can create `AlertDialog`, `Modal` or even `Drawer` all according to our needs without fighting library predefined styles
+
+Good examples of such libraries are:
+- [Kobalte](https://kobalte.dev/docs/core/overview/introduction) - Solid
+- [Ark UI](https://ark-ui.com/) - React/Vue/Solid with Svelte on roadmap but currently not possible due to Svelte's limitations
+- [Radix](https://www.radix-ui.com/) - React
+
+## I18n (WIP)
 
 # Future
-- Fine grained reactivity
+- Fine grained reactivity (angular adding new state api using signal concept)
 - Compiler optimizations
 - Developer experience focus
 - Even better Typescript support
 - Tools written in Go/Rust e.g. `swc` and `esbuild`
 - Signals - popularized by solid, `preact` and `angular` made decision to switch their state handling, other libraries might follow
+- Focus on server side related solutions such as server components, island  and streaming
+- Focus on frameworks built on top of base libraries: nextjs, sveltekit, solid start, astro
+
+# Interesting articles
+- https://dev.to/this-is-learning/the-cost-of-consistency-in-ui-frameworks-4agi
+- https://dev.to/ryansolid/marko-compiling-fine-grained-reactivity-4lk4

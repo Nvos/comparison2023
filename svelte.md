@@ -22,6 +22,7 @@ Given that `svelte` had few years to grow, there's barely any good library, and 
   - https://github.com/hperrin/svelte-material-ui (active)
   - https://github.com/themesberg/flowbite-svelte (active)
   - https://github.com/carbon-design-system/carbon-components-svelte (active)
+  - https://github.com/skeletonlabs/skeleton (active)
 - Styling (baked in framework itself, simple file scoped css modules/scss)
 - i18n
   - https://github.com/kaisermann/svelte-i18n (inactive) - wrapper for formatjs. Doesn't offer extraction or common i18n formats, only json
@@ -45,6 +46,7 @@ Component reactivity is quite convenient as changes are applied synchronously wh
 
 - Works amazingly well for low complexity but becomes problematic to reason about and manage along with complexity grow
 - Magical `$: {statement}` only works in `.svelte` files which makes it problematic as it means extracting state logic to separate file isn't simple copy paste. It is necessary to refactor reactive statements used in `.svelte` file to use functions from `svelte/store`. Then After importing state from extracted logic prefixing variables with `$` is necessary.
+- Handles granularity of updates at component level, determining dependencies at compile time to remove need for runtime subscription system (stores are exception)
 
 ### Store
 
